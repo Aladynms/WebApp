@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, defineEmits } from "vue";
+import { reactive } from "vue";
 import { TaskService, type Task } from "@/api/TaskService";
 
 const props = defineProps<{ storyId: number }>();
