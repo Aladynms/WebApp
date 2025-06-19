@@ -48,7 +48,7 @@ app.get("/auth/me", (req, res) => {
   const auth = req.headers.authorization;
   if (!auth) return res.status(401).json({ message: "Missing token" });
   try {
-    const token = auth.split(" ")[1];
+    const token = auth.split(" ")[1]; 
     const payload = jwt.verify(token, SECRET);
     const user = USERS.find(u => u.id === payload.id);
     if (!user) return res.status(404).json({ message: "Not found" });
