@@ -5,6 +5,7 @@ import { ActiveProjectService } from "@/api/ActiveProjectService";
 
 const Home = () => import("@/views/Home.vue");
 const ProjectView = () => import("@/views/ProjectView.vue");
+const UsersView = () => import("@/views/UsersView.vue");
 
 
 const routes: RouteRecordRaw[] = [
@@ -16,6 +17,10 @@ const routes: RouteRecordRaw[] = [
     path: "/project/:id",
     component: ProjectView, 
     props: true,
+  },
+  {
+    path: "/users",
+    component: UsersView ,
   },
 ];
 
