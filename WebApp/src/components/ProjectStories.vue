@@ -113,7 +113,8 @@ onMounted(load);
         <h3 class="text-lg font-semibold">{{ story.name }}</h3>
         <p class="text-sm text-gray-700">{{ story.description }}</p>
         <p class="text-sm">Priorytet: {{ story.priority }} | Status: {{ story.status }}</p>
-        <div class="mt-2 space-x-2">
+        <div class="mt-2 flex gap-2">
+          <button @click="$router.push(`/story/${story.id}`)" class="bg-indigo-600 text-white px-3 py-1 rounded">Wejdź</button>
           <button @click="edit(story)" class="bg-yellow-500 text-white px-3 py-1 rounded">Edytuj</button>
           <button @click="remove(story.id)" class="bg-red-500 text-white px-3 py-1 rounded">Usuń</button>
         </div>
