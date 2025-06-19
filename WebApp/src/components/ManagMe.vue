@@ -50,37 +50,80 @@
 </script>
 
 <template>
-    <div class="p-6 max-w-2xl mx-auto">
-      <h1 class="text-2xl font-bold mb-4">Zarządzanie projektami</h1>
-  
-      <!-- Formularz dodawania/edycji -->
-      <form @submit.prevent="saveProject" class="mb-6 p-4 border rounded">
-        <input v-model="form.name" type="text" placeholder="Nazwa projektu" class="w-full p-2 border rounded mb-2" required />
-        <textarea v-model="form.description" placeholder="Opis projektu" class="w-full p-2 border rounded mb-2" required></textarea>
-        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
+  <div class="p-6 max-w-3xl mx-auto text-gray-800 dark:text-gray-100">
+    <h1 class="text-3xl font-bold mb-6 text-center">📁 Zarządzanie projektami</h1>
+
+    <!-- Formularz dodawania/edycji -->
+    <form
+      @submit.prevent="saveProject"
+      class="mb-8 p-6 rounded-lg bg-white dark:bg-gray-800 shadow-md space-y-4"
+    >
+      <input
+        v-model="form.name"
+        type="text"
+        placeholder="Nazwa projektu"
+        class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+        required
+      />
+      <textarea
+        v-model="form.description"
+        placeholder="Opis projektu"
+        class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+        required
+      ></textarea>
+      <div class="flex gap-2">
+        <button
+          type="submit"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition"
+        >
           {{ form.id ? "Zapisz zmiany" : "Dodaj projekt" }}
         </button>
-        <button v-if="form.id" @click="resetForm" type="button" class="ml-2 bg-gray-400 text-white px-4 py-2 rounded">
+        <button
+          v-if="form.id"
+          @click="resetForm"
+          type="button"
+          class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md transition"
+        >
           Anuluj
         </button>
-      </form>
-  
-      <!-- Lista projektów -->
-      <ul class="space-y-4">
-        <li v-for="project in projects" :key="project.id" class="p-4 border rounded flex justify-between">
-          <div>
-            <h3 class="text-lg font-semibold">{{ project.name }}</h3>
-            <p class="text-gray-600">{{ project.description }}</p>
-          </div>
-          <div class="flex space-x-2">
-            <button @click="$router.push(`/project/${project.id}`)" class="bg-green-500 text-white px-3 py-1 rounded">Wejdź</button>
-            <button @click="editProject(project)" class="bg-yellow-500 text-white px-3 py-1 rounded">Edytuj</button>
-            <button @click="deleteProject(project.id)" class="bg-red-500 text-white px-3 py-1 rounded">Usuń</button>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </template>
+      </div>
+    </form>
+
+    <!-- Lista projektów -->
+    <ul class="space-y-4">
+      <li
+        v-for="project in projects"
+        :key="project.id"
+        class="p-5 rounded-lg bg-white dark:bg-gray-800 shadow-md flex justify-between items-center"
+      >
+        <div>
+          <h3 class="text-xl font-semibold">{{ project.name }}</h3>
+          <p class="text-gray-600 dark:text-gray-300">{{ project.description }}</p>
+        </div>
+        <div class="flex space-x-2">
+          <button
+            @click="$router.push(`/project/${project.id}`)"
+            class="bg-green-600 hover:bg-green-700 text-white px-4 py-1.5 rounded-md transition"
+          >
+            Wejdź
+          </button>
+          <button
+            @click="editProject(project)"
+            class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1.5 rounded-md transition"
+          >
+            Edytuj
+          </button>
+          <button
+            @click="deleteProject(project.id)"
+            class="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-md transition"
+          >
+            Usuń
+          </button>
+        </div>
+      </li>
+    </ul>
+  </div>
+</template>
   
   
   

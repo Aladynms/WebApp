@@ -6,12 +6,27 @@ const users: User[] = UserService.getAll();
 </script>
 
 <template>
-  <div class="mt-4">
-    <h1 class="text-2xl font-bold mb-4">Użytkownicy</h1>
+  <div class="max-w-3xl mx-auto mt-8 px-4">
+    <h1 class="text-3xl font-bold mb-6 text-gray-800 dark:text-gray-100 text-center">
+      👥 Użytkownicy
+    </h1>
 
-    <div v-for="user in users" :key="user.id" class="card">
-      <p class="font-semibold">{{ user.firstName }} {{ user.lastName }}</p>
-      <p class="text-sm text-gray-400">Rola: {{ user.role }}</p>
+    <div class="grid gap-4">
+      <div
+        v-for="user in users"
+        :key="user.id"
+        class="p-5 rounded-lg shadow-md bg-white dark:bg-gray-800 flex justify-between items-center"
+      >
+        <div>
+          <p class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            {{ user.firstName }} {{ user.lastName }}
+          </p>
+          <p class="text-sm text-gray-600 dark:text-gray-400">Rola: {{ user.role }}</p>
+        </div>
+        <div class="text-sm px-3 py-1 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 capitalize">
+          {{ user.role }}
+        </div>
+      </div>
     </div>
   </div>
 </template>

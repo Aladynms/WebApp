@@ -14,60 +14,26 @@ onMounted(load);
 </script>
 
 <template>
-  <div class="kanban-board">
-    <!-- Todo -->
-    <div class="kanban-column">
-      <h2>🕐 Todo</h2>
-      <div v-for="task in tasks.filter(t => t.status === 'todo')" :key="task.id" class="kanban-card">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-md min-h-[300px]">
+      <h2 class="text-lg font-semibold text-center mb-4 text-gray-800 dark:text-gray-100">🕐 Todo</h2>
+      <div v-for="task in tasks.filter(t => t.status === 'todo')" :key="task.id" class="mb-4">
         <TaskCard :task="task" @updated="load" />
       </div>
     </div>
 
-    <!-- Doing -->
-    <div class="kanban-column">
-      <h2>🔧 Doing</h2>
-      <div v-for="task in tasks.filter(t => t.status === 'doing')" :key="task.id" class="kanban-card">
+    <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-md min-h-[300px]">
+      <h2 class="text-lg font-semibold text-center mb-4 text-gray-800 dark:text-gray-100">🔧 Doing</h2>
+      <div v-for="task in tasks.filter(t => t.status === 'doing')" :key="task.id" class="mb-4">
         <TaskCard :task="task" @updated="load" />
       </div>
     </div>
 
-    <!-- Done -->
-    <div class="kanban-column">
-      <h2>✅ Done</h2>
-      <div v-for="task in tasks.filter(t => t.status === 'done')" :key="task.id" class="kanban-card">
+    <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-md min-h-[300px]">
+      <h2 class="text-lg font-semibold text-center mb-4 text-gray-800 dark:text-gray-100">✅ Done</h2>
+      <div v-for="task in tasks.filter(t => t.status === 'done')" :key="task.id" class="mb-4">
         <TaskCard :task="task" @updated="load" />
       </div>
     </div>
   </div>
 </template>
-
-<style scoped>
-.kanban-board {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.kanban-column {
-  flex: 1;
-  background-color: var(--color-surface);
-  padding: 1rem;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  min-height: 400px;
-  display: flex;
-  flex-direction: column;
-}
-
-.kanban-column h2 {
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
-  color: var(--color-text);
-  font-weight: 600;
-  text-align: center;
-}
-
-.kanban-card {
-  margin-bottom: 1rem;
-}
-</style>

@@ -15,9 +15,11 @@ const refreshKanban = () => kanbanKey.value++;
 </script>
 
 <template>
-  <div class="mt-4">
-    <h1 class="text-2xl font-bold mb-2">Historyjka: {{ story?.name }}</h1>
-    <p class="mb-4">{{ story?.description }}</p>
+  <div class="max-w-5xl mx-auto px-4 py-6">
+    <h1 class="text-3xl font-bold mb-2 text-gray-800 dark:text-gray-100">
+      📘 Historyjka: {{ story?.name }}
+    </h1>
+    <p class="text-gray-600 dark:text-gray-300 mb-6">{{ story?.description }}</p>
 
     <TaskForm :story-id="storyId" @updated="refreshKanban" />
     <TaskKanban :story-id="storyId" :key="kanbanKey" />
