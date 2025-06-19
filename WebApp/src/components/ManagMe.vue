@@ -73,6 +73,7 @@
             <p class="text-gray-600">{{ project.description }}</p>
           </div>
           <div class="flex space-x-2">
+            <button @click="$router.push(`/project/${project.id}`)" class="bg-green-500 text-white px-3 py-1 rounded">Wejdź</button>
             <button @click="editProject(project)" class="bg-yellow-500 text-white px-3 py-1 rounded">Edytuj</button>
             <button @click="deleteProject(project.id)" class="bg-red-500 text-white px-3 py-1 rounded">Usuń</button>
           </div>
