@@ -25,7 +25,7 @@ const setTheme = (value: "light" | "dark" | "auto") => {
 </script>
 
 <template>
-  <nav class="flex justify-between items-center px-6 py-4 bg-white dark:bg-gray-900 shadow-md">
+  <nav class="sticky top-0 z-50 flex justify-between items-center px-6 py-4 bg-white dark:bg-gray-900 shadow-md">
     <!-- Lewa sekcja -->
     <div class="flex gap-2">
       <button
