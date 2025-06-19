@@ -1,18 +1,24 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import type { RouteRecordRaw } from "vue-router";
 import { ActiveProjectService } from "@/api/ActiveProjectService";
+import { AuthService } from "@/api/AuthService";
 
 
 const Home = () => import("@/views/Home.vue");
 const ProjectView = () => import("@/views/ProjectView.vue");
 const UsersView = () => import("@/views/UsersView.vue");
 const StoryView = () => import("@/views/StoryView.vue");
+const LoginView = () => import("@/views/LoginView.vue");
 
 
 const routes: RouteRecordRaw[] = [
   {
     path: "/",
     component: Home,
+  },
+  {
+    path: "/login",
+    component: LoginView,
   },
   {
     path: "/project/:id",
@@ -35,15 +41,24 @@ const router = createRouter({
   routes
 });
 
-// ⬇️ Dodajemy przekierowanie domyślne na aktywny projekt
 router.beforeEach((to, from, next) => {
-  const activeId = ActiveProjectService.getActiveProjectId();
+  const isAuthenticated = AuthService.isAuthenticated();
+  const isPublic = to.path === "/login";
 
-  if (to.path === "/" && activeId) {
-    next(`/project/${activeId}`);
-  } else {
-    next();
+  if (!isAuthenticated && !isPublic) {
+    // Nie zalogowany → tylko /login dozwolone
+    return next("/login");
   }
+
+  // Jeśli zalogowany i wchodzi na / → przekieruj na aktywny projekt (jeśli jest)
+  if (to.path === "/" && isAuthenticated) {
+    const activeId = ActiveProjectService.getActiveProjectId();
+    if (activeId) {
+      return next(`/project/${activeId}`);
+    }
+  }
+
+  next(); // domyślnie przejdź dalej
 });
 
 export default router;
