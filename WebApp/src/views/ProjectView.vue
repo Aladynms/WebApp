@@ -5,12 +5,10 @@ import { ActiveProjectService } from "@/api/ActiveProjectService";
 import ProjectStories from "@/components/ProjectStories.vue";
 
 const route = useRoute();
-const projectId = Number(route.params.id);
+const projectId = route.params.id as string;
 
-onMounted(() => {
-  if (!isNaN(projectId)) {
-    ActiveProjectService.setActiveProject(projectId);
-  }
+onMounted(async () => {
+  await ActiveProjectService.setActiveProject(projectId);
 });
 </script>
 

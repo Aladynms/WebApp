@@ -1,28 +1,46 @@
-export type UserRole = "admin" | "developer" | "devops";
+import { ref } from "vue";
 
 export interface User {
-  id: number;
+  id: string;
   firstName: string;
   lastName: string;
-  role: UserRole;
+  role: "admin" | "developer" | "devops";
 }
 
-const USERS: User[] = [
-  { id: 1, firstName: "Anna", lastName: "Nowak", role: "admin" },     // Zalogowany
-  { id: 2, firstName: "Michał", lastName: "Kowalski", role: "developer" },
-  { id: 3, firstName: "Ewa", lastName: "Wiśniewska", role: "devops" },
-];
+export const currentUser = ref<User | null>(null);
 
 export class UserService {
-  static getCurrentUser(): User {
-    return USERS[0]; // Admin
+  static async fetchCurrentUser(): Promise<User | null> {
+    try {
+      const res = await fetch("http://localhost:3000/auth/me", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      });
+
+      if (!res.ok) throw new Error();
+      const user = await res.json();
+      currentUser.value = { ...user, id: user._id };
+      return currentUser.value;
+    } catch {
+      currentUser.value = null;
+      return null;
+    }
   }
 
-  static getAll(): User[] {
-    return USERS;
+  static async fetchAll(): Promise<User[]> {
+    const res = await fetch("http://localhost:3000/api/users");
+    const data = await res.json();
+    return data.map((u: any) => ({ ...u, id: u._id }));
   }
 
-  static getById(id: number): User | undefined {
-    return USERS.find((u) => u.id === id);
+  static getById(id: string): Promise<User | undefined> {
+    return this.fetchAll().then(users => users.find(u => u.id === id));
+  }
+
+  static logout() {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    currentUser.value = null;
   }
 }

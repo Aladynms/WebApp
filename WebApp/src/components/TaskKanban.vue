@@ -2,13 +2,16 @@
 import { ref, onMounted } from "vue";
 import { TaskService, type Task } from "@/api/TaskService";
 import TaskCard from "./TaskCard.vue";
+import { watch } from "vue";
 
-const props = defineProps<{ storyId: number }>();
+const props = defineProps<{ storyId: string; reloadTrigger: number }>();
 const tasks = ref<Task[]>([]);
 
-const load = () => {
-  tasks.value = TaskService.getByStory(props.storyId);
+const load = async () => {
+  tasks.value = await TaskService.getByStory(props.storyId);
 };
+
+watch(() => props.reloadTrigger, load);
 
 onMounted(load);
 </script>

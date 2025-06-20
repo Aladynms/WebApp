@@ -41,18 +41,17 @@ const router = createRouter({
   routes
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const isAuthenticated = AuthService.isAuthenticated();
   const isPublic = to.path === "/login";
 
   if (!isAuthenticated && !isPublic) {
-    // Nie zalogowany → tylko /login dozwolone
     return next("/login");
   }
 
   // Jeśli zalogowany i wchodzi na / → przekieruj na aktywny projekt (jeśli jest)
   if (to.path === "/" && isAuthenticated) {
-    const activeId = ActiveProjectService.getActiveProjectId();
+    const activeId = await ActiveProjectService.getActiveProjectId();
     if (activeId) {
       return next(`/project/${activeId}`);
     }

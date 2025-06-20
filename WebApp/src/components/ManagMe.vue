@@ -2,41 +2,50 @@
   import { defineComponent, reactive, onMounted } from "vue";
   import { ProjectService } from "../api/ProjectService";
   import type { Project } from "../api/ProjectService";
-  
+
   export default defineComponent({
     name: "ManagMe",
     setup() {
       const projects = reactive<Project[]>([]);
-      const form = reactive<Project>({ id: 0, name: "", description: "" });
-  
-      const loadProjects = () => {
-        const data = ProjectService.getAll();
+      const form = reactive<Project>({ id: "", name: "", description: "" });
+
+      const loadProjects = async () => {
+        const data = await ProjectService.getAll();
         projects.splice(0, projects.length, ...data);
       };
-  
-      const saveProject = () => {
-        ProjectService.save({ ...form });
+
+      const saveProject = async () => {
+        await ProjectService.save({
+          id: form.id,
+          name: form.name,
+          description: form.description,
+        });
         resetForm();
-        loadProjects();
+        await loadProjects();
       };
-  
+
       const editProject = (project: Project) => {
-        Object.assign(form, project);
+        form.id = project.id;
+        form.name = project.name;
+        form.description = project.description;
       };
-  
-      const deleteProject = (id: number) => {
-        ProjectService.delete(id);
-        loadProjects();
+
+      const deleteProject = async (id: string) => {
+        const confirmed = confirm("Czy na pewno chcesz usunąć ten projekt?");
+        if (!confirmed) return;
+
+        await ProjectService.delete(id.toString());
+        await loadProjects();
       };
-  
+
       const resetForm = () => {
-        form.id = 0;
+        form.id = "";
         form.name = "";
         form.description = "";
       };
-  
+
       onMounted(loadProjects);
-  
+
       return {
         projects,
         form,

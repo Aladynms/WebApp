@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { AuthService } from "@/api/AuthService";
+import { UserService } from "@/api/UserService";
 
 const router = useRouter();
 const login = ref("");
@@ -11,6 +12,7 @@ const error = ref("");
 const submit = async () => {
   try {
     await AuthService.login(login.value, password.value);
+    await UserService.fetchCurrentUser();
     router.push("/");
   } catch (e: any) {
     error.value = "Niepoprawne dane logowania.";

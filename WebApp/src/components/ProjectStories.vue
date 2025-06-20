@@ -2,64 +2,91 @@
 import { ref, reactive, onMounted, computed } from "vue";
 import type { Story, Status } from "@/api/StoryService";
 import { StoryService } from "@/api/StoryService";
-import { UserService } from "@/api/UserService";
+import { UserService, currentUser } from "@/api/UserService";
 
-const props = defineProps<{ projectId: number }>();
+const props = defineProps<{ projectId: string }>();
 
 const stories = ref<Story[]>([]);
-const form = reactive<Omit<Story, "id" | "createdAt">>({
-  name: "",
-  description: "",
-  priority: "medium",
-  status: "todo",
-  projectId: props.projectId,
-  ownerId: UserService.getCurrentUser().id,
-});
-
-const editingId = ref<number | null>(null);
+const form = ref<Omit<Story, "id" | "createdAt"> | null>(null);
+const editingId = ref<string | null>(null);
 const filter = ref<Status | "all">("all");
 
-const filteredStories = computed(() => {
-  return filter.value === "all"
+const filteredStories = computed(() =>
+  filter.value === "all"
     ? stories.value
-    : stories.value.filter((s) => s.status === filter.value);
-});
+    : stories.value.filter((s) => s.status === filter.value)
+);
 
-function load() {
-  stories.value = StoryService.getByProject(props.projectId);
+async function load() {
+  stories.value = await StoryService.getByProject(props.projectId);
 }
 
-function save() {
+async function save() {
+  if (!form.value) return;
+
   const story: Story = {
-    ...form,
-    id: editingId.value ?? 0,
+    ...form.value,
+    id: editingId.value ?? "",
     createdAt: "",
   };
 
-  StoryService.save(story);
+  await StoryService.save(story);
   resetForm();
-  load();
+  await load();
 }
 
 function edit(story: Story) {
-  Object.assign(form, story);
+  form.value = reactive<Omit<Story, "id" | "createdAt">>({
+    name: story.name,
+    description: story.description,
+    priority: story.priority,
+    status: story.status,
+    projectId: story.projectId,
+    ownerId: story.ownerId,
+  });
   editingId.value = story.id;
 }
 
-function remove(id: number) {
-  StoryService.delete(id);
-  load();
+async function remove(id: string) {
+  if (!id) {
+    console.error("Brak ID – nie można usunąć.");
+    return;
+  }
+
+  const confirmed = confirm("Czy na pewno chcesz usunąć tę historyjkę?");
+  if (!confirmed) return;
+
+  await StoryService.delete(id);
+  await load();
 }
 
 function resetForm() {
-  form.name = "";
-  form.description = "";
-  form.priority = "medium";
-  form.status = "todo";
+  if (!currentUser.value) return;
+
+  form.value = reactive<Omit<Story, "id" | "createdAt">>({
+    name: "",
+    description: "",
+    priority: "medium",
+    status: "todo",
+    projectId: props.projectId,
+    ownerId: currentUser.value.id,
+  });
   editingId.value = null;
 }
-
-onMounted(load);
+onMounted(async () => {
+  await UserService.fetchCurrentUser();
+  if (currentUser.value) {
+    form.value = reactive<Omit<Story, "id" | "createdAt">>({
+      name: "",
+      description: "",
+      priority: "medium",
+      status: "todo",
+      projectId: props.projectId,
+      ownerId: currentUser.value.id,
+    });
+  }
+  await load();
+});
 </script>
 
 <template>
@@ -68,7 +95,7 @@ onMounted(load);
       <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">🧩 Zarządzanie historyjkami</h2>
 
       <!-- Formularz -->
-      <form @submit.prevent="save" class="p-6 rounded-lg bg-white dark:bg-gray-800 shadow-md space-y-4">
+      <form v-if="form" @submit.prevent="save" class="p-6 rounded-lg bg-white dark:bg-gray-800 shadow-md space-y-4">
         <input
           v-model="form.name"
           placeholder="Nazwa"

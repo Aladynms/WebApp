@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { UserService } from "@/api/UserService";
+import { currentUser, UserService } from "@/api/UserService";
 import { ActiveProjectService } from "@/api/ActiveProjectService";
-import { ThemeService } from "@/api/ThemeService";
+import { ThemeService, type Theme  } from "@/api/ThemeService";
 
 const router = useRouter();
-const user = computed(() => UserService.getCurrentUser());
-const theme = ref(ThemeService.get());
+const theme = ref<Theme>("auto");
 
-const goToProjects = () => {
-  ActiveProjectService.clear();
+const goToProjects = async () => {
+  await ActiveProjectService.clear();
   router.push("/");
 };
 
@@ -18,14 +17,30 @@ const goToUsers = () => {
   router.push("/users");
 };
 
+const logout = () => {
+  UserService.logout();
+  router.push("/login");
+};
+
 const setTheme = (value: "light" | "dark" | "auto") => {
   theme.value = value;
   ThemeService.set(value);
 };
+
+onMounted(async () => {
+  theme.value = await ThemeService.get();
+
+  if (!currentUser.value) {
+    await UserService.fetchCurrentUser();
+  }
+});
 </script>
 
 <template>
-  <nav class="sticky top-0 z-50 flex justify-between items-center px-6 py-4 bg-white dark:bg-gray-900 shadow-md">
+  <nav
+    v-if="currentUser"
+    class="sticky top-0 z-50 flex justify-between items-center px-6 py-4 bg-white dark:bg-gray-900 shadow-md"
+  >
     <!-- Lewa sekcja -->
     <div class="flex gap-2">
       <button
@@ -55,10 +70,18 @@ const setTheme = (value: "light" | "dark" | "auto") => {
         <option value="dark">🌙 Ciemny</option>
       </select>
 
-      <!-- Użytkownik -->
+      <!-- Dane użytkownika -->
       <span class="hidden sm:inline-block font-medium">
-        👤 {{ user.firstName }} {{ user.lastName }}
+        👤 {{ currentUser.firstName }} {{ currentUser.lastName }}
       </span>
+
+      <!-- Wyloguj -->
+      <button
+        @click="logout"
+        class="px-3 py-1.5 rounded-md bg-red-100 hover:bg-red-200 dark:bg-red-700 dark:hover:bg-red-600 text-sm font-medium text-red-800 dark:text-white transition"
+      >
+        🚪 Wyloguj
+      </button>
     </div>
   </nav>
 </template>

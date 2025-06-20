@@ -1,8 +1,13 @@
 <script setup lang="ts">
+import { ref, onMounted } from "vue";
 import { UserService } from "@/api/UserService";
 import type { User } from "@/api/UserService";
 
-const users: User[] = UserService.getAll();
+const users = ref<User[]>([]);
+
+onMounted(async () => {
+  users.value = await UserService.fetchAll();
+});
 </script>
 
 <template>

@@ -1,14 +1,30 @@
-type Theme = "light" | "dark" | "auto";
-const STORAGE_KEY = "theme";
+export type Theme = "light" | "dark" | "auto";
 
 export class ThemeService {
-  static get(): Theme {
-    const saved = localStorage.getItem(STORAGE_KEY) as Theme | null;
-    return saved ?? "auto";
+  static async get(): Promise<Theme> {
+    const token = localStorage.getItem("accessToken");
+    if (!token) return "auto"; // fallback gdy nie jesteśmy zalogowani
+
+    const res = await fetch("http://localhost:3000/api/users/settings", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!res.ok) return "auto"; // fallback gdy np. 401
+    const data = await res.json();
+    return data.theme ?? "auto";
   }
 
-  static set(theme: Theme): void {
-    localStorage.setItem(STORAGE_KEY, theme);
+  static async set(theme: Theme): Promise<void> {
+    const token = localStorage.getItem("accessToken");
+    await fetch("http://localhost:3000/api/users/settings", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ theme }),
+    });
+
     this.apply(theme);
   }
 
@@ -25,8 +41,8 @@ export class ThemeService {
     }
   }
 
-  // wywołać raz przy starcie
-  static init() {
-    this.apply(this.get());
+  static async init() {
+    const theme = await this.get();
+    this.apply(theme);
   }
 }

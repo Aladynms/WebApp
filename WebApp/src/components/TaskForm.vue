@@ -2,7 +2,7 @@
 import { reactive } from "vue";
 import { TaskService, type Task } from "@/api/TaskService";
 
-const props = defineProps<{ storyId: number }>();
+const props = defineProps<{ storyId: string }>();
 const emit = defineEmits(["updated"]);
 
 const form = reactive<Omit<Task, "id" | "createdAt">>({
@@ -10,21 +10,21 @@ const form = reactive<Omit<Task, "id" | "createdAt">>({
   description: "",
   priority: "medium",
   storyId: props.storyId,
-  estimatedHours: 0,
+  estimatedHours: "",
   status: "todo"
 });
 
-const save = () => {
-  TaskService.save({ ...form, id: 0, createdAt: "" });
+const save = async () => {
+  await TaskService.save({ ...form, id: "", createdAt: "" });
   reset();
-  emit("updated");
+  await emit("updated");
 };
 
 const reset = () => {
   form.name = "";
   form.description = "";
   form.priority = "medium";
-  form.estimatedHours = 0;
+  form.estimatedHours = "";
   form.status = "todo";
 };
 </script>

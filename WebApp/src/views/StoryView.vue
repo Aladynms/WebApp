@@ -2,22 +2,28 @@
 import { useRoute } from "vue-router";
 import { useRouter } from "vue-router";
 import { StoryService } from "@/api/StoryService";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import TaskForm from "@/components/TaskForm.vue";
 import TaskKanban from "@/components/TaskKanban.vue";
 import { ActiveProjectService } from "@/api/ActiveProjectService";
 
 const route = useRoute();
 const router = useRouter();
-const storyId = Number(route.params.id);
-const story = ref(StoryService.getAll().find(s => s.id === storyId) || null);
+const storyId = Array.isArray(route.params.id) ? route.params.id[0] : route.params.id;
+const story = ref<any>(null);
+
+onMounted(async () => {
+  story.value = await StoryService.getById(storyId);
+});
 
 // Przeładuj TaskKanban przez zmianę klucza
 const kanbanKey = ref(0);
-const refreshKanban = () => kanbanKey.value++;
+const refreshKanban = async () => {
+  kanbanKey.value++;
+};
 
-const goBack = () => {
-  const projectId = ActiveProjectService.getActiveProjectId();
+const goBack = async () => {
+  const projectId = await ActiveProjectService.getActiveProjectId();
   if (projectId) {
     router.push(`/project/${projectId}`);
   } else {
@@ -44,6 +50,6 @@ const goBack = () => {
     </div>
 
     <TaskForm :story-id="storyId" @updated="refreshKanban" />
-    <TaskKanban :story-id="storyId" :key="kanbanKey" />
+    <TaskKanban :story-id="storyId" :reload-trigger="kanbanKey" />
   </div>
 </template>

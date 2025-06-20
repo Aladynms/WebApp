@@ -4,7 +4,7 @@ import App from './App.vue'
 import router from "./router";
 import { ThemeService } from './api/ThemeService';
 
-ThemeService.init();
+await ThemeService.init();
 
 
 const app = createApp(App);

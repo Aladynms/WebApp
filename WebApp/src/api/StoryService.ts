@@ -2,45 +2,47 @@ export type Priority = "low" | "medium" | "high";
 export type Status = "todo" | "doing" | "done";
 
 export interface Story {
-  id: number;
+  id: string;
   name: string;
   description: string;
   priority: Priority;
   createdAt: string;
   status: Status;
-  projectId: number;
-  ownerId: number;
+  projectId: string;
+  ownerId: string;
 }
 
-const STORAGE_KEY = "stories";
-
 export class StoryService {
-  static getAll(): Story[] {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+  static async getByProject(projectId: string): Promise<Story[]> {
+    const res = await fetch(`http://localhost:3000/api/stories/project/${projectId}`);
+    const data = await res.json();
+    return await data.map((s: any) => ({
+      ...s,
+      id: s._id, 
+    }));
   }
 
-  static getByProject(projectId: number): Story[] {
-    return this.getAll().filter((story) => story.projectId === projectId);
+  static async getById(id: string): Promise<Story> {
+    const res = await fetch(`http://localhost:3000/api/stories/${id}`);
+    return await res.json();
   }
 
-  static save(story: Story): void {
-    const stories = this.getAll();
-    const index = stories.findIndex((s) => s.id === story.id);
+  static async save(story: Story): Promise<void> {
+    const method = story.id ? "PUT" : "POST";
+    const url = story.id
+      ? `http://localhost:3000/api/stories/${story.id}`
+      : `http://localhost:3000/api/stories`;
 
-    if (index !== -1) {
-      stories[index] = story;
-    } else {
-      story.id = Date.now();
-      story.createdAt = new Date().toISOString();
-      stories.push(story);
-    }
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(stories));
+    await fetch(url, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(story),
+    });
   }
 
-  static delete(id: number): void {
-    const updated = this.getAll().filter((s) => s.id !== id);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  static async delete(id: string): Promise<void> {
+    await fetch(`http://localhost:3000/api/stories/${id}`, {
+      method: "DELETE",
+    });
   }
 }
