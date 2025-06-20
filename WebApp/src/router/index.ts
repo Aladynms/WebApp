@@ -42,22 +42,31 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  const isAuthenticated = AuthService.isAuthenticated();
   const isPublic = to.path === "/login";
 
-  if (!isAuthenticated && !isPublic) {
-    return next("/login");
-  }
+  try {
+    // 👉 Spróbuj pobrać dane użytkownika (automatycznie odświeża token w razie potrzeby)
+    const user = await AuthService.getMe();
 
-  // Jeśli zalogowany i wchodzi na / → przekieruj na aktywny projekt (jeśli jest)
-  if (to.path === "/" && isAuthenticated) {
-    const activeId = await ActiveProjectService.getActiveProjectId();
-    if (activeId) {
-      return next(`/project/${activeId}`);
+    // Jeśli użytkownik nie istnieje, wyloguj
+    if (!user && !isPublic) {
+      AuthService.logout();
+      return next("/login");
     }
-  }
 
-  next(); // domyślnie przejdź dalej
+    // ✅ Jeśli wchodzisz na "/" → przekieruj do aktywnego projektu
+    if (to.path === "/" && user) {
+      const activeId = await ActiveProjectService.getActiveProjectId();
+      if (activeId) return next(`/project/${activeId}`);
+    }
+
+    return next(); // idź dalej
+  } catch (e: any) {
+    // ❌ Błąd autoryzacji
+    AuthService.logout();
+    if (!isPublic) return next("/login");
+    return next(); // np. na login
+  }
 });
 
 export default router;

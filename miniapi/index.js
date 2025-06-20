@@ -41,14 +41,31 @@ app.post("/auth/login", async (req, res) => {
 app.post("/auth/refresh", async (req, res) => {
   const { refreshToken } = req.body;
   const { SECRET } = require("./middleware/auth");
+  const jwt = require("jsonwebtoken");
+
+  if (!refreshToken) {
+    return res.status(400).json({ message: "Refresh token required" });
+  }
 
   try {
-    const payload = require("jsonwebtoken").verify(refreshToken, SECRET);
+    const payload = jwt.verify(refreshToken, SECRET);
+
+    // ❗ Sprawdź, czy to rzeczywiście refresh token
+    if (payload.type !== "refresh") {
+      return res.status(401).json({ message: "Invalid token type" });
+    }
+
     const user = await User.findById(payload.id);
-    if (!user) throw new Error();
-    res.json(generateToken(user));
-  } catch {
-    res.status(401).json({ message: "Invalid refresh token" });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // ✅ Wygeneruj nowe tokeny
+    const { accessToken, refreshToken: newRefreshToken } = require("./middleware/auth").generateToken(user);
+    res.json({ accessToken, refreshToken: newRefreshToken });
+  } catch (e) {
+    console.error("❌ Refresh token error:", e.message);
+    return res.status(401).json({ message: "Invalid refresh token" });
   }
 });
 

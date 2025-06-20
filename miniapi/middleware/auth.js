@@ -17,9 +17,18 @@ function authenticate(req, res, next) {
 }
 
 function generateToken(user) {
-  const payload = { id: user._id, role: user.role };
-  const accessToken = jwt.sign(payload, SECRET, { expiresIn: "15m" });
-  const refreshToken = jwt.sign(payload, SECRET, { expiresIn: "7d" });
+  const accessToken = jwt.sign(
+    { id: user._id, role: user.role, type: "access" },
+    SECRET,
+    { expiresIn: "15m" }
+  );
+
+  const refreshToken = jwt.sign(
+    { id: user._id, role: user.role, type: "refresh" },
+    SECRET,
+    { expiresIn: "7d" }
+  );
+
   return { accessToken, refreshToken };
 }
 
