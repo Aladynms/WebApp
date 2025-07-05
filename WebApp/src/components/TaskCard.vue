@@ -11,7 +11,6 @@ const users = ref<User[]>([]);
 const assigneeId = ref<string | null>(props.task.assigneeId ?? null);
 const assignee = ref<User | null>(null);
 
-// Załaduj listę użytkowników i znajdź przypisanego
 onMounted(async () => {
   users.value = (await UserService.fetchAll()).filter((u) => u.role !== "admin");
 
