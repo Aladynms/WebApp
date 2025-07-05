@@ -3,13 +3,13 @@ export type Theme = "light" | "dark" | "auto";
 export class ThemeService {
   static async get(): Promise<Theme> {
     const token = localStorage.getItem("accessToken");
-    if (!token) return "auto"; // fallback gdy nie jesteśmy zalogowani
+    if (!token) return "auto"; 
 
     const res = await fetch("http://localhost:3000/api/users/settings", {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    if (!res.ok) return "auto"; // fallback gdy np. 401
+    if (!res.ok) return "auto"; 
     const data = await res.json();
     return data.theme ?? "auto";
   }

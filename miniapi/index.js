@@ -15,19 +15,19 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-// 📦 Import tras
+
 const usersRouter = require("./routes/users");
 const projectsRouter = require("./routes/projects");
 const storiesRouter = require("./routes/stories");
 const tasksRouter = require("./routes/tasks");
 
-// 📌 REST API
+
 app.use("/api/users", usersRouter);
 app.use("/api/projects", projectsRouter);
 app.use("/api/stories", storiesRouter);
 app.use("/api/tasks", tasksRouter);
 
-// 🔐 Login endpoint
+
 app.post("/auth/login", async (req, res) => {
   const { login, password } = req.body;
   const user = await User.findOne({ login, password });
@@ -37,7 +37,7 @@ app.post("/auth/login", async (req, res) => {
   res.json(tokens);
 });
 
-// 🔄 Refresh token
+
 app.post("/auth/refresh", async (req, res) => {
   const { refreshToken } = req.body;
   const { SECRET } = require("./middleware/auth");
@@ -50,7 +50,6 @@ app.post("/auth/refresh", async (req, res) => {
   try {
     const payload = jwt.verify(refreshToken, SECRET);
 
-    // ❗ Sprawdź, czy to rzeczywiście refresh token
     if (payload.type !== "refresh") {
       return res.status(401).json({ message: "Invalid token type" });
     }
@@ -60,7 +59,6 @@ app.post("/auth/refresh", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // ✅ Wygeneruj nowe tokeny
     const { accessToken, refreshToken: newRefreshToken } = require("./middleware/auth").generateToken(user);
     res.json({ accessToken, refreshToken: newRefreshToken });
   } catch (e) {
@@ -69,7 +67,6 @@ app.post("/auth/refresh", async (req, res) => {
   }
 });
 
-// 👤 Get current user
 app.get("/auth/me", async (req, res) => {
   const auth = req.headers.authorization;
   if (!auth) return res.status(401).json({ message: "Missing token" });

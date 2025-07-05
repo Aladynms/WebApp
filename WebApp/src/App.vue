@@ -1,5 +1,11 @@
 <script setup lang="ts">
 import Navbar from "@/components/Navbar.vue";
+
+/*
+node index.js
+npm run dev
+npx cypress open
+*/
 </script>
 
 <template>
@@ -10,3 +16,4 @@ import Navbar from "@/components/Navbar.vue";
     </main>
   </div>
 </template>
+

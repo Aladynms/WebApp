@@ -45,27 +45,23 @@ router.beforeEach(async (to, from, next) => {
   const isPublic = to.path === "/login";
 
   try {
-    // 👉 Spróbuj pobrać dane użytkownika (automatycznie odświeża token w razie potrzeby)
     const user = await AuthService.getMe();
 
-    // Jeśli użytkownik nie istnieje, wyloguj
     if (!user && !isPublic) {
       AuthService.logout();
       return next("/login");
     }
 
-    // ✅ Jeśli wchodzisz na "/" → przekieruj do aktywnego projektu
     if (to.path === "/" && user) {
       const activeId = await ActiveProjectService.getActiveProjectId();
       if (activeId) return next(`/project/${activeId}`);
     }
 
-    return next(); // idź dalej
+    return next();
   } catch (e: any) {
-    // ❌ Błąd autoryzacji
     AuthService.logout();
     if (!isPublic) return next("/login");
-    return next(); // np. na login
+    return next(); 
   }
 });
 

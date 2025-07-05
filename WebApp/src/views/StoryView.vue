@@ -16,7 +16,7 @@ onMounted(async () => {
   story.value = await StoryService.getById(storyId);
 });
 
-// Przeładuj TaskKanban przez zmianę klucza
+
 const kanbanKey = ref(0);
 const refreshKanban = async () => {
   kanbanKey.value++;
@@ -27,14 +27,13 @@ const goBack = async () => {
   if (projectId) {
     router.push(`/project/${projectId}`);
   } else {
-    router.push("/"); // fallback gdyby ID było nullem
+    router.push("/"); 
   }
 };
 </script>
 
 <template>
   <div class="max-w-5xl mx-auto px-4 py-6 space-y-6">
-    <!-- Przycisk powrotu -->
     <button
       @click="goBack"
       class="text-sm px-4 py-2 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600 transition"

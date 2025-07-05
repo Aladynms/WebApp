@@ -94,7 +94,7 @@ onMounted(async () => {
     <div>
       <h2 class="text-2xl font-bold mb-4 text-gray-800 dark:text-gray-100">🧩 Zarządzanie historyjkami</h2>
 
-      <!-- Formularz -->
+
       <form v-if="form" @submit.prevent="save" class="p-6 rounded-lg bg-white dark:bg-gray-800 shadow-md space-y-4">
         <input
           v-model="form.name"
@@ -133,7 +133,6 @@ onMounted(async () => {
       </form>
     </div>
 
-    <!-- Filtrowanie -->
     <div class="flex items-center gap-4">
       <label class="text-gray-700 dark:text-gray-300">🔍 Filtruj:</label>
       <select v-model="filter" class="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100">
@@ -144,7 +143,7 @@ onMounted(async () => {
       </select>
     </div>
 
-    <!-- Lista historyjek -->
+
     <ul class="space-y-4">
       <li v-for="story in filteredStories" :key="story.id" class="p-5 rounded-lg bg-white dark:bg-gray-800 shadow-md">
         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">{{ story.name }}</h3>

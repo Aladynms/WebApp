@@ -41,7 +41,7 @@ onMounted(async () => {
     v-if="currentUser"
     class="sticky top-0 z-50 flex justify-between items-center px-6 py-4 bg-white dark:bg-gray-900 shadow-md"
   >
-    <!-- Lewa sekcja -->
+
     <div class="flex gap-2">
       <button
         @click="goToProjects"
@@ -57,9 +57,9 @@ onMounted(async () => {
       </button>
     </div>
 
-    <!-- Prawa sekcja -->
+
     <div class="flex items-center gap-4 text-sm text-gray-700 dark:text-gray-300">
-      <!-- Motyw -->
+     
       <select
         v-model="theme"
         @change="setTheme(theme)"
@@ -70,12 +70,12 @@ onMounted(async () => {
         <option value="dark">🌙 Ciemny</option>
       </select>
 
-      <!-- Dane użytkownika -->
+     
       <span class="hidden sm:inline-block font-medium">
         👤 {{ currentUser.firstName }} {{ currentUser.lastName }}
       </span>
 
-      <!-- Wyloguj -->
+
       <button
         @click="logout"
         class="px-3 py-1.5 rounded-md bg-red-100 hover:bg-red-200 dark:bg-red-700 dark:hover:bg-red-600 text-sm font-medium text-red-800 dark:text-white transition"

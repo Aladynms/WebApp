@@ -26,15 +26,18 @@ describe('Testy E2E: Zarządzanie projektami', () => {
       .within(() => {
         cy.contains('Wejdź').click();
       });
+    cy.wait(500);
     cy.contains('🧩 Zarządzanie historyjkami');
     cy.get('input[placeholder="Nazwa"]').type(story.name);
     cy.get('textarea[placeholder="Opis"]').type(story.description);
     cy.contains('Dodaj').click();
+    cy.wait(500);
     cy.contains(story.name);
   });
   
   it('Dodaje nowe zadanie do usunięcia', () => {
     cy.contains(story.name).parent().contains('Wejdź').click();
+    cy.wait(500);
     cy.get('input[placeholder="Nazwa"]').type(task.name);
     cy.get('textarea[placeholder="Opis"]').type(task.description);
     cy.contains('form', '➕ Dodaj zadanie').within(() => {
@@ -42,21 +45,25 @@ describe('Testy E2E: Zarządzanie projektami', () => {
     });
     cy.get('input[type="number"]').type(task.hours);
     cy.contains('button', 'Dodaj zadanie').click();
+    cy.wait(500);
     cy.contains(task.name);
   });
 
   it('Usuwa zadanie', () => {
     cy.contains(story.name).parent().contains('Wejdź').click();
+    cy.wait(500);
     cy.contains('.p-4', task.name).as('taskCard');
     cy.get('@taskCard').within(() => {
       cy.contains('button', 'Usuń').click();
     }); 
     cy.on('window:confirm', () => true);
+    cy.wait(500);
     cy.contains('.p-4', task.name).should('not.exist');
   });
 
   it('Dodaje nowe zadanie', () => {
     cy.contains(story.name).parent().contains('Wejdź').click();
+    cy.wait(500);
     cy.get('input[placeholder="Nazwa"]').type(task.name);
     cy.get('textarea[placeholder="Opis"]').type(task.description);
     cy.contains('form', '➕ Dodaj zadanie').within(() => {
@@ -64,11 +71,13 @@ describe('Testy E2E: Zarządzanie projektami', () => {
     });
     cy.get('input[type="number"]').type(task.hours);
     cy.contains('button', 'Dodaj zadanie').click();
+    cy.wait(500);
     cy.contains(task.name);
   });
 
   it('Zmienia status zadania z todo → doing → done', () => {
     cy.contains(story.name).parent().contains('Wejdź').click();
+    cy.wait(500);
     cy.contains('.p-4', task.name).within(() => {
       cy.contains('Status: todo').should('exist');
       cy.get('select').select(task.dev);
@@ -92,6 +101,7 @@ describe('Testy E2E: Zarządzanie projektami', () => {
       cy.contains('Usuń').click();
     });
     cy.on('window:confirm', () => true);
+    cy.wait(500);
     cy.contains(story.name).should('not.exist');
   });
 

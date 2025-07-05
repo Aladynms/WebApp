@@ -12,8 +12,8 @@
       const loadProjects = async () => {
         const data = await ProjectService.getAll();
         projects.splice(0, projects.length, ...data);
-      };
-
+      }; 
+      
       const saveProject = async () => {
         await ProjectService.save({
           id: form.id,
@@ -62,7 +62,7 @@
   <div class="p-6 max-w-3xl mx-auto text-gray-800 dark:text-gray-100">
     <h1 class="text-3xl font-bold mb-6 text-center">📁 Zarządzanie projektami</h1>
 
-    <!-- Formularz dodawania/edycji -->
+   
     <form
       @submit.prevent="saveProject"
       class="mb-8 p-6 rounded-lg bg-white dark:bg-gray-800 shadow-md space-y-4"
@@ -98,7 +98,7 @@
       </div>
     </form>
 
-    <!-- Lista projektów -->
+   
     <ul class="space-y-4">
       <li
         v-for="project in projects"
@@ -132,6 +132,7 @@
       </li>
     </ul>
   </div>
+<Nowycom />
 </template>
   
   

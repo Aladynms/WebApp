@@ -49,3 +49,8 @@ export class TaskService {
     });
   }
 }
+
+
+function funkcja(){
+  return 10;
+}
